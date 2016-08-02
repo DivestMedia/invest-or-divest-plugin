@@ -5,7 +5,7 @@ Plugin URI: #
 Description: Divestmedia plugin for Invest or Divest
 Author: ljopleda@gmail.com
 Version: 1.0
-Author URI: 
+Author URI:
 */
 define( 'INVEST_DIVEST_VERSION', '1.0' );
 define( 'INVEST_DIVEST_MIN_WP_VERSION', '4.4' );
@@ -16,6 +16,7 @@ define( 'INVEST_DIVEST_DEBUG' , true );
 require_once(INVEST_DIVEST_PLUGIN_DIR . 'lib/class-invest-or-divest.php');
 require_once(INVEST_DIVEST_PLUGIN_DIR . 'lib/iod-custom-template.php');
 require_once(INVEST_DIVEST_PLUGIN_DIR . 'lib/iod-generate-widget.php');
+require_once(INVEST_DIVEST_PLUGIN_DIR . 'lib/class-more-videos.php');
 
 if(class_exists('InvestOrDivest'))
 {

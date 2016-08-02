@@ -90,7 +90,7 @@
 
             if(vid_data.type=='link'){
                 $.ajax({
-                    url: "/wordpress/wp-admin/admin-ajax.php",
+                    url: "/wp-admin/admin-ajax.php",
                     dataType: 'json',
                     type: 'POST',
                     data: {
@@ -135,7 +135,7 @@
                 }));
                 if(type=='link'){
                     $.ajax({
-                        url: "/wordpress/wp-admin/admin-ajax.php",
+                        url: "/wp-admin/admin-ajax.php",
                         type: 'POST',
                         dataType: 'json',
                         data: {
@@ -173,7 +173,7 @@
             $('[name$="_score"]').val(JSON.stringify(ratingvalue));
         });
 
-        $('[name="input_gr_casino"]').suggest("/wordpress/wp-admin/admin-ajax.php?action=game_casino_search", {multiple:true, multipleSep: ","})
+        $('[name="input_gr_casino"]').suggest("/wp-admin/admin-ajax.php?action=game_casino_search", {multiple:true, multipleSep: ","})
         $('#casino_tag .casinoadd').click(function(){
             var current_tags = $('[name="_gr_casino"]').val().split(',');
             var new_tags = $('[name="input_gr_casino"]').val().trim().replace(/,/i, "").split(',');
