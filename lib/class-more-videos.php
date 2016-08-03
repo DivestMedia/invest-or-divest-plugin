@@ -8,7 +8,7 @@ class InvestOrDivestWidget
 
 
 
-	public function generate_featured_videos($limit=4){
+	public function generate_featured_videos($limit=4,$exclude = []){
 		$type = 'iod_video';
 		$posts = get_posts(array(
 			'post_type'   => $type,
@@ -16,7 +16,8 @@ class InvestOrDivestWidget
 			'posts_per_page' => $limit,
 			'orderby' => 'rand',
 			'meta_key'   => '_is_featured',
-			'meta_value' => 1
+			'meta_value' => 1,
+			'exclude' => $exclude
 		)
 	);
 	if( !empty($posts)) {
@@ -25,8 +26,12 @@ class InvestOrDivestWidget
 			<?php
 			foreach ($posts as $p) {
 				$iod_video = json_decode(get_post_meta( $p->ID, '_iod_video',true))->embed->url;
-				$vid_id = explode('=', $iod_video);
-				$iod_video_thumbnail = 'http://img.youtube.com/vi/'.end($vid_id).'/mqdefault.jpg';
+				$ytpattern = '/^.*(?:(?:youtu\.be\/|v\/|vi\/|u\/\w\/|embed\/)|(?:(?:watch)?\?v(?:i)?=|\&v(?:i)?=))([^#\&\?]*).*/';
+				if(preg_match($ytpattern,$iod_video,$vid_id)){
+					$iod_video_thumbnail = 'http://img.youtube.com/vi/'.end($vid_id).'/mqdefault.jpg';
+				}else{
+					$iod_video_thumbnail = 'http://www.askgamblers.com/uploads/original/isoftbet-2-5474883270a0f81c4b8b456b.png';
+				};
 				?>
 				<div class="col-md-3 col-sm-6 margin-bottom-10">
 					<figure class="">
