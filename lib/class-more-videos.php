@@ -14,6 +14,7 @@ class InvestOrDivestWidget
 			'post_type'   => $type,
 			'post_status' => 'publish',
 			'posts_per_page' => $limit,
+			'posts_per_archive_page' => $limit,
 			'orderby' => 'rand',
 			'meta_key'   => '_is_featured',
 			'meta_value' => 1,
@@ -66,6 +67,7 @@ class InvestOrDivestWidget
 				'post_type'   => $type,
 				'post_status' => 'publish',
 				'posts_per_page' => $limit,
+				'posts_per_archive_page' => $limit,
 				'orderby' => 'rand',
 				'exclude' => $exclude
 			)
