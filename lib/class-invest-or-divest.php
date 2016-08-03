@@ -13,8 +13,8 @@ if(!class_exists('InvestOrDivest'))
             add_action('init', [&$this, 'main_init']);
             add_action('admin_init', [&$this, 'admin_init']);
             add_filter( 'manage_edit-iod_video_columns', [&$this,'custom_iod_video_columns'] ) ;
-            add_action( 'manage_posts_custom_column' , [&$this,'iod_video_columns_data'], 10, 2 ); 
-            add_action( 'admin_head' , [&$this,'iod_video_columns_css'] ); 
+            add_action( 'manage_posts_custom_column' , [&$this,'iod_video_columns_data'], 10, 2 );
+            add_action( 'admin_head' , [&$this,'iod_video_columns_css'] );
         }
 
         public function iod_video_columns_css(){
@@ -108,7 +108,8 @@ if(!class_exists('InvestOrDivest'))
                         'has_archive' => true,
                         'menu_icon'           => 'dashicons-video-alt',
                         'rewrite' => [
-                            'slug' => 'invest-or-divest'
+                            'slug' => 'invest-or-divest',
+                            'with_front' => false
                         ],
                         'supports' => [
                             'title',
@@ -129,7 +130,7 @@ if(!class_exists('InvestOrDivest'))
                 public function create_reviews_meta_boxes(){
                     add_meta_box( 'iod_video_review', 'Invest or Divest Video', [&$this, 'cb_game_video_review_metabox'], 'iod_video' , 'normal', 'high');
                 }
-                
+
                 public function cb_game_video_review_metabox(){
                     global $post;
                     $gr_ov_data  = [];

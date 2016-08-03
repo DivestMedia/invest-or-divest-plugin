@@ -68,8 +68,12 @@ class InvestOrDivestWidget
 		if( !empty($posts)) {
 			foreach ($posts as $p) {
 				$iod_video = json_decode(get_post_meta( $p->ID, '_iod_video',true))->embed->url;
-				$vid_id = explode('=', $iod_video);
-				$iod_video_thumbnail = 'http://img.youtube.com/vi/'.end($vid_id).'/mqdefault.jpg';
+				$ytpattern = '/^.*(?:(?:youtu\.be\/|v\/|vi\/|u\/\w\/|embed\/)|(?:(?:watch)?\?v(?:i)?=|\&v(?:i)?=))([^#\&\?]*).*/';
+				if(preg_match($ytpattern,$iod_video,$vid_id)){
+					$iod_video_thumbnail = 'http://img.youtube.com/vi/'.end($vid_id).'/mqdefault.jpg';
+				}else{
+					$iod_video_thumbnail = 'http://www.askgamblers.com/uploads/original/isoftbet-2-5474883270a0f81c4b8b456b.png';
+				};
 				?>
 				<div class="margin-bottom-20 col-md-12 col-sm-12 col-xs-12">
 					<div class="col-md-4 col-sm-3 col-xs-4" style="padding: 0;">
