@@ -23,5 +23,14 @@ if(class_exists('InvestOrDivest'))
   register_activation_hook(__FILE__, array('InvestOrDivest', 'activate'));
   register_deactivation_hook(__FILE__, array('InvestOrDivest', 'deactivate'));
   $InvestOrDivest = new InvestOrDivest();
+}
+
+if(class_exists('IODCustomTemplate'))
+{
   $IODCustomTemplate = new IODCustomTemplate();
+}
+
+if(class_exists('InvestOrDivestWidget'))
+{
+  $InvestOrDivestWidget = new InvestOrDivestWidget();
 }

@@ -65,6 +65,7 @@ class InvestOrDivestCustomWidget extends WP_Widget {
           <?php }?>
           </div>
           </div>
+          <hr>
         <?php
         }
 

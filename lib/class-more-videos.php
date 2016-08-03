@@ -107,6 +107,8 @@ class InvestOrDivestWidget
 
 public function get_style() {
 	wp_enqueue_style( 'invest-or-divest-widget-style', INVEST_DIVEST_PLUGIN_URL . '/css/invest-or-divest-widget-style.min.css' );
+	wp_register_script( 'invest-or-divest-widget-script', INVEST_DIVEST_PLUGIN_URL . '/js/invest-or-divest-widget-script.js' , ['jquery'], null );
+	wp_enqueue_script( 'invest-or-divest-widget-script' );
 }
 
 // If $countonly is true, post views will not be updated.
