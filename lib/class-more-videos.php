@@ -8,9 +8,9 @@ class InvestOrDivestWidget
 
 
 
-	public function generate_featured_videos($limit=4,$exclude = []){
+	public function generate_featured_videos($limit=4,$exclude = [],$category = ''){
 		$type = 'iod_video';
-		$posts = get_posts(array(
+		$posts = get_posts([
 			'post_type'   => $type,
 			'post_status' => 'publish',
 			'posts_per_page' => $limit,
@@ -18,9 +18,10 @@ class InvestOrDivestWidget
 			'orderby' => 'rand',
 			'meta_key'   => '_is_featured',
 			'meta_value' => 1,
-			'exclude' => $exclude
-		)
-	);
+			'exclude' => $exclude,
+			'taxonomy'=>'iod_category',
+			'term'=> $category
+		]);
 	if( !empty($posts)) {
 		?>
 		<div class="row grid-color">
@@ -55,7 +56,7 @@ class InvestOrDivestWidget
 		<?php
 	}
 
-	public function generate_side_widget($limit=8,$exclude = []){
+	public function generate_side_widget($limit=8,$exclude = [],$category = ''){
 		?>
 		<div class="col-md-12 col-sm-12 cont-more-episodes">
 			<h4>More Episodes</h4>
@@ -63,83 +64,84 @@ class InvestOrDivestWidget
 			<?php
 			$type = 'iod_video';
 
-			$posts = get_posts(array(
+			$posts = get_posts([
 				'post_type'   => $type,
 				'post_status' => 'publish',
 				'posts_per_page' => $limit,
 				'posts_per_archive_page' => $limit,
 				'orderby' => 'rand',
-				'exclude' => $exclude
-			)
-		);
-		if( !empty($posts)) {
-			foreach ($posts as $p) {
-				$iod_video = json_decode(get_post_meta( $p->ID, '_iod_video',true))->embed->url;
-				$ytpattern = '/^.*(?:(?:youtu\.be\/|v\/|vi\/|u\/\w\/|embed\/)|(?:(?:watch)?\?v(?:i)?=|\&v(?:i)?=))([^#\&\?]*).*/';
-				if(preg_match($ytpattern,$iod_video,$vid_id)){
-					$iod_video_thumbnail = 'http://img.youtube.com/vi/'.end($vid_id).'/mqdefault.jpg';
-				}else{
-					$iod_video_thumbnail = 'http://www.askgamblers.com/uploads/original/isoftbet-2-5474883270a0f81c4b8b456b.png';
-				};
+				'exclude' => $exclude,
+				'taxonomy'=>'iod_category',
+				'term'=> $category
+			]);
+			if( !empty($posts)) {
+				foreach ($posts as $p) {
+					$iod_video = json_decode(get_post_meta( $p->ID, '_iod_video',true))->embed->url;
+					$ytpattern = '/^.*(?:(?:youtu\.be\/|v\/|vi\/|u\/\w\/|embed\/)|(?:(?:watch)?\?v(?:i)?=|\&v(?:i)?=))([^#\&\?]*).*/';
+					if(preg_match($ytpattern,$iod_video,$vid_id)){
+						$iod_video_thumbnail = 'http://img.youtube.com/vi/'.end($vid_id).'/mqdefault.jpg';
+					}else{
+						$iod_video_thumbnail = 'http://www.askgamblers.com/uploads/original/isoftbet-2-5474883270a0f81c4b8b456b.png';
+					};
+					?>
+					<div class="margin-bottom-20 col-md-12 col-sm-12 col-xs-12">
+						<div class="col-md-4 col-sm-3 col-xs-4" style="padding: 0;">
+							<a href="<?=$p->guid?>">
+								<img class="img-responsive episode-thumbnail" src="<?=$iod_video_thumbnail?>" alt="<?=$p->post_title; ?>" />
+							</a>
+						</div>
+						<div class="col-md-8 col-sm-9 col-xs-8 cont-episode-details">
+							<a href="<?=$p->guid?>" title="<?=$p->post_title; ?>" class="title"><strong><?=$p->post_title; ?></strong></a>
+							<label><i class="fa fa-eye fa-fw"></i><?=self::count_postviews($p->ID,true)?> views</label>
+							<label><i class="fa fa-comments fa-fw"></i><?=$p->comment_count?> comments</label>
+						</div>
+					</div>
+					<?php
+				}
+			}else{
 				?>
-				<div class="margin-bottom-20 col-md-12 col-sm-12 col-xs-12">
-					<div class="col-md-4 col-sm-3 col-xs-4" style="padding: 0;">
-						<a href="<?=$p->guid?>">
-							<img class="img-responsive episode-thumbnail" src="<?=$iod_video_thumbnail?>" alt="<?=$p->post_title; ?>" />
-						</a>
-					</div>
-					<div class="col-md-8 col-sm-9 col-xs-8 cont-episode-details">
-						<a href="<?=$p->guid?>" title="<?=$p->post_title; ?>" class="title"><strong><?=$p->post_title; ?></strong></a>
-						<label><i class="fa fa-eye fa-fw"></i><?=self::count_postviews($p->ID,true)?> views</label>
-						<label><i class="fa fa-comments fa-fw"></i><?=$p->comment_count?> comments</label>
-					</div>
-				</div>
+				<label class="text-center margin-bottom-20 size-14 block ">No more episodes yet</label>
 				<?php
 			}
-		}else{
+			wp_reset_query();  // Restore global post data stomped by the_post().
 			?>
-			<label class="text-center margin-bottom-20 size-14 block ">No more episodes yet</label>
-			<?php
-		}
-		wp_reset_query();  // Restore global post data stomped by the_post().
-		?>
-	</div>
-	<?php
-}
-
-public function get_style() {
-	wp_enqueue_style( 'invest-or-divest-widget-style', INVEST_DIVEST_PLUGIN_URL . '/css/invest-or-divest-widget-style.min.css' );
-	wp_register_script( 'invest-or-divest-widget-script', INVEST_DIVEST_PLUGIN_URL . '/js/invest-or-divest-widget-script.js' , ['jquery'], null );
-	wp_enqueue_script( 'invest-or-divest-widget-script' );
-}
-
-// If $countonly is true, post views will not be updated.
-public function count_postviews($post_ID,$countonly=false) {
-	$count_metakey = 'iod_views_count';
-	$count = get_post_meta($post_ID, $count_metakey, true);
-	if($countonly){
-		$count = $count==''?0:$count;
-		return $count;
+		</div>
+		<?php
 	}
-	//If the the Post Custom Field value is empty.
-	if($count == ''){
-		$count = 0; // set the counter to zero.
-		//Delete all custom fields with the specified key from the specified post.
-		delete_post_meta($post_ID, $count_metakey);
-		//Add a custom (meta) field (Name/value)to the specified post.
-		add_post_meta($post_ID, $count_metakey, '1');
-		return $count . ' View';
-		//If the the Post Custom Field value is NOT empty.
-	}else{
-		$count++;
-		//Update the value of an existing meta key (custom field) for the specified post.
-		update_post_meta($post_ID, $count_metakey, $count);
-		if($count == '1'){
-			return $count . ' view';
+
+	public function get_style() {
+		wp_enqueue_style( 'invest-or-divest-widget-style', INVEST_DIVEST_PLUGIN_URL . '/css/invest-or-divest-widget-style.min.css' );
+		wp_register_script( 'invest-or-divest-widget-script', INVEST_DIVEST_PLUGIN_URL . '/js/invest-or-divest-widget-script.js' , ['jquery'], null );
+		wp_enqueue_script( 'invest-or-divest-widget-script' );
+	}
+
+	// If $countonly is true, post views will not be updated.
+	public function count_postviews($post_ID,$countonly=false) {
+		$count_metakey = 'iod_views_count';
+		$count = get_post_meta($post_ID, $count_metakey, true);
+		if($countonly){
+			$count = $count==''?0:$count;
+			return $count;
 		}
-		else {
-			return $count . ' views';
+		//If the the Post Custom Field value is empty.
+		if($count == ''){
+			$count = 0; // set the counter to zero.
+			//Delete all custom fields with the specified key from the specified post.
+			delete_post_meta($post_ID, $count_metakey);
+			//Add a custom (meta) field (Name/value)to the specified post.
+			add_post_meta($post_ID, $count_metakey, '1');
+			return $count . ' View';
+			//If the the Post Custom Field value is NOT empty.
+		}else{
+			$count++;
+			//Update the value of an existing meta key (custom field) for the specified post.
+			update_post_meta($post_ID, $count_metakey, $count);
+			if($count == '1'){
+				return $count . ' view';
+			}
+			else {
+				return $count . ' views';
+			}
 		}
 	}
-}
 }

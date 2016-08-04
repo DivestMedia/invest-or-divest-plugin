@@ -58,19 +58,19 @@ if(!class_exists('InvestOrDivest'))
             'iod_video',        //post type name
             array(
                 'hierarchical' => true,
-                'label' => 'IOD Category',  //Display name
+                'label' => 'Video Category',  //Display name
                 'labels' => 	[
-                    'name'              => 'IOD Category',
-                    'singular_name'     => 'IOD Category',
-                    'search_items'      => 'Search Categories',
-                    'all_items'         => 'All Categories',
-                    'parent_item'       => 'Parent Category',
-                    'parent_item_colon' => 'Parent Category:',
-                    'edit_item'         => 'Edit Category',
-                    'update_item'       => 'Update Category',
-                    'add_new_item'      => 'Add New Category',
-                    'new_item_name'     => 'New Category',
-                    'menu_name'         => 'IOD Category',
+                    'name'              => 'Video Category',
+                    'singular_name'     => 'Video Category',
+                    'search_items'      => 'Search Video Categories',
+                    'all_items'         => 'All Video Categories',
+                    'parent_item'       => 'Parent Video Category',
+                    'parent_item_colon' => 'Parent Video Category:',
+                    'edit_item'         => 'Edit Video Category',
+                    'update_item'       => 'Update Video Category',
+                    'add_new_item'      => 'Add New Video Category',
+                    'new_item_name'     => 'New Video Category',
+                    'menu_name'         => 'Video Category',
                     ],
                     'public' => true,
                     'publicly_queryable' => true,
@@ -85,31 +85,30 @@ if(!class_exists('InvestOrDivest'))
                         'assign_terms',
                         ],
                         'rewrite' =>[
-                            'slug' => 'iod-category', // This controls the base slug that will display before each term
+                            'slug' => 'video', // This controls the base slug that will display before each term
                             'with_front' => false // Don't display the category base before
                             ]
                         )
                     );
                     $registered = register_post_type( 'iod_video',[
                         'labels' => [
-                            'name' => 'Invest or Divest Videos',
-                            'singular_name' => 'Invest or Divest Video',
-                            'add_new' => 'Add New IOD Video',
-                            'add_new_item' => 'Add New IOD Video',
-                            'edit_item' => 'Edit IODVideo',
-                            'new_item' => 'Add New IOD Video',
-                            'view_item' => 'View IOD Video',
-                            'search_items' => 'Search IOD Video',
-                            'not_found' => 'No iod video found',
-                            'not_found_in_trash' => 'No iod video found in trash'
+                            'name' => 'Videos',
+                            'singular_name' => 'Video',
+                            'add_new' => 'Add New Video',
+                            'add_new_item' => 'Add New Video',
+                            'edit_item' => 'Edit Video',
+                            'new_item' => 'Add New Video',
+                            'view_item' => 'View Video',
+                            'search_items' => 'Search Video',
+                            'not_found' => 'No Video found',
+                            'not_found_in_trash' => 'No Video found in trash'
                         ],
                         'public' => true,
                         'capability_type' => 'post',
                         'has_archive' => true,
                         'menu_icon'           => 'dashicons-video-alt',
                         'rewrite' => [
-                            'slug' => 'invest-or-divest',
-                            'with_front' => false
+                            'slug' => 'videos',
                         ],
                         'supports' => [
                             'title',
@@ -128,7 +127,7 @@ if(!class_exists('InvestOrDivest'))
                     add_action( 'add_meta_boxes', [&$this, 'create_reviews_meta_boxes']);
                 }
                 public function create_reviews_meta_boxes(){
-                    add_meta_box( 'iod_video_review', 'Invest or Divest Video', [&$this, 'cb_game_video_review_metabox'], 'iod_video' , 'normal', 'high');
+                    add_meta_box( 'iod_video_review', 'Video', [&$this, 'cb_game_video_review_metabox'], 'iod_video' , 'normal', 'high');
                 }
 
                 public function cb_game_video_review_metabox(){
