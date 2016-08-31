@@ -49,8 +49,8 @@ if(!class_exists('InvestOrDivest'))
         }
         public function admin_init(){
             $this->register_reviews_meta_boxes();
-            add_action( 'admin_enqueue_scripts', [$this, 'enqueue_admin_styles'] );
-            add_action( 'admin_enqueue_scripts', [$this, 'enqueue_admin_scripts'] );
+            add_action( 'admin_enqueue_scripts', [&$this, 'enqueue_admin_styles'] );
+            add_action( 'admin_enqueue_scripts', [&$this, 'enqueue_admin_scripts'] );
         }
         public function create_invest_or_divest_post_type(){
             register_taxonomy(
@@ -168,6 +168,7 @@ if(!class_exists('InvestOrDivest'))
                 }
                 public function enqueue_admin_styles(){
                     global $post;
+                    if(!$post) return;
                     if($post->post_type != 'iod_video')
                     return;
                     $styles = [
@@ -181,6 +182,7 @@ if(!class_exists('InvestOrDivest'))
                 }
                 public function enqueue_admin_scripts($hook){
                     global $post;
+                    if(!$post) return;
                     if($post->post_type != 'iod_video')
                     return;
                     $scripts = [

@@ -3,24 +3,24 @@
 // Block direct requests
 if ( !defined('ABSPATH') )
   die('-1');
-  
+
 // register widget
 add_action( 'widgets_init', function(){
      register_widget( 'InvestOrDivestCustomWidget' );
-}); 
+});
 
 
 class InvestOrDivestCustomWidget extends WP_Widget {
 
     // constructor
     public function __construct() {
-         parent::WP_Widget(false, $name = __('Invest or Divest Featured Video', 'wp_custom_iod_featured_widget') );
+         parent::__construct(false, $name = __('Invest or Divest Featured Video', 'wp_custom_iod_featured_widget') );
     }
 
     // display widget
     public function widget($args, $instance) {
         extract( $args );
-        
+
         if( $instance) {
              // these are the widget options
            $title = apply_filters('widget_title', $instance['title']);
@@ -28,7 +28,7 @@ class InvestOrDivestCustomWidget extends WP_Widget {
              $title = 'FEATURED VIDEO';
         }
 
-       
+
        echo $before_widget;
        // Display the widget
        echo '<div class="widget-text wp_widget_plugin_box">';
@@ -52,7 +52,7 @@ class InvestOrDivestCustomWidget extends WP_Widget {
         ?>
           <div class="row grid-color margin-bottom-20">
             <div class="col-md-12">
-          <?php 
+          <?php
           foreach ($posts as $p) {
           ?>
            <div class="embed-responsive embed-responsive-16by9">
@@ -98,4 +98,3 @@ class InvestOrDivestCustomWidget extends WP_Widget {
         return $instance;
     }
 }
-
