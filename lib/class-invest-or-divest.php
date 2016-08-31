@@ -175,8 +175,8 @@ if(!class_exists('InvestOrDivest'))
                         'admin' => INVEST_DIVEST_PLUGIN_URL . '/css/admin',
                     ];
                     foreach ( $styles as $id => $path) {
-                        wp_register_style( $id . '-css' , $path . '.css', false);
-                        wp_enqueue_style( $id . '-css');
+                        wp_register_style( 'iod-' . $id . '-css' , $path . '.css', false);
+                        wp_enqueue_style( 'iod-' . $id . '-css');
                     };
                     wp_enqueue_style('thickbox');
                 }
@@ -189,8 +189,8 @@ if(!class_exists('InvestOrDivest'))
                         'admin' => INVEST_DIVEST_PLUGIN_URL . 'js/admin',
                     ];
                     foreach ($scripts as $id => $path) {
-                        wp_register_script( $id . '-js',  $path . '.js' ,['jquery']);
-                        wp_enqueue_script( $id . '-js');
+                        wp_register_script( 'iod-' . $id . '-js',  $path . '.js' ,['jquery']);
+                        wp_enqueue_script( 'iod-' . $id . '-js');
                     }
                     wp_enqueue_script('media-upload');
                     wp_enqueue_script('thickbox');
