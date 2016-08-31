@@ -196,7 +196,10 @@ if(!class_exists('InvestOrDivest'))
                     wp_enqueue_script('thickbox');
                     wp_enqueue_script('suggest');
                 }
-                public function activate(){ }
-                public function deactivate(){ }
+                public static function activate(){
+                    
+
+                }
+                public static function deactivate(){ }
             }
         }
