@@ -1,4 +1,5 @@
 <?php
+// include_once INVEST_DIVEST_PLUGIN_DIR . 'bulkimport.php';
 $upload_link = esc_url( get_upload_iframe_src( 'video', $post->ID ) );
 ?>
 <div class="video-review-container">
