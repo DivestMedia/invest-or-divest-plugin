@@ -186,7 +186,20 @@ if(!class_exists('InvestOrDivest'))
                                     $minutes = $parts[0][0]%60; (strlen($parts[0][0]%60)<1)?$parts[0][0]%60:'0'.$parts[0][0]%60;
                                     $seconds = $parts[0][1];(strlen($parts[0][1])<1)?$parts[0][1]:'0'.$parts[0][1];
                                     update_post_meta($post->ID, 'video-duration', sprintf('%02d:%02d:%02d',$hours,$minutes,$seconds));
+
                                 }
+
+                                $videoStatistics = $this->file_get_contents_curl("https://www.googleapis.com/youtube/v3/videos?part=statistics&id=$videoid&key=$apikey");
+                                $videoStatistics =json_decode($videoStatistics, true);
+                                if(is_array($videoStatistics)){
+                                    update_post_meta($post->ID, 'video-statistics',json_encode($videoStatistics));
+                                    update_post_meta($post->ID, 'view-count',$videoStatistics['items'][0]['statistics']['viewCount']);
+                                    update_post_meta($post->ID, 'like-count',$videoStatistics['items'][0]['statistics']['likeCount']);
+                                    update_post_meta($post->ID, 'dislike-count',$videoStatistics['items'][0]['statistics']['dislikeCount']);
+                                    update_post_meta($post->ID, 'favorite-count',$videoStatistics['items'][0]['statistics']['favoriteCount']);
+                                    update_post_meta($post->ID, 'comment-count',$videoStatistics['items'][0]['statistics']['commentCount']);
+                                }
+
 
                                 // Get Video Published Date
                                 $videoSnippet = $this->file_get_contents_curl("https://www.googleapis.com/youtube/v3/videos?part=snippet&id=$videoid&key=$apikey");
