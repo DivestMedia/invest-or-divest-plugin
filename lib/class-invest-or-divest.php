@@ -25,6 +25,51 @@ if(!class_exists('InvestOrDivest'))
             ';
         }
 
+
+        // $attachment = [
+        //     'Video Title',
+        //     'Video URL',
+        //     'New Video Uploaded on Market MasterClass.com'
+        //     '#36a64f',
+        //     'New Video Uploaded on Market MasterClass.com',
+        //     []
+        // ]
+        public function slackbotsend($msg = '',$attachment = []){
+            $loop = \React\EventLoop\Factory::create();
+            $client = new \Slack\ApiClient($loop);
+            $client->setToken('xoxb-96296393831-vDBfYkWD0jBNn2jqNv9TJyge');
+
+            if(!empty($attachment)){
+                $attachment = new \Slack\Message\Attachment($attachment);
+            }
+
+            $client->getChannelById('C2T5E9MU1')->then(function (\Slack\Channel $channel) use ($client,$msg,$attachment) {
+                // $client->send('Hello Ralph from '.gethostname(), $channel);
+                // $text = $_GET['chat-message'];
+                if(empty($attachment)){
+                    $message = $client->getMessageBuilder()
+                    ->setText($msg)
+                    ->setChannel($channel)
+                    ->create();
+                }else{
+                    // new Attachment( string $title, string $text, string $fallback = null, $color = null, $pretext = null, array $fields = [] )
+                    $message = $client->getMessageBuilder()
+                    ->addAttachment($attachment)
+                    ->setChannel($channel)
+                    ->create();
+                }
+
+                $client->apiCall('chat.postMessage', [
+                    'text' => $message->getText(),
+                    'channel' => $message->data['channel'],
+                    'username' => 'marketmasterclassbot',
+                    'as_user' => false ,
+                    'icon_url' => 'https://avatars.slack-edge.com/2016-10-26/96235543043_445846a143687f3c5cc4_48.png'
+                ]);
+            });
+            $loop->run();
+        }
+
         public function custom_iod_video_columns( $columns ) {
             $newcolumns = array(
                 'is_featured' => __( 'Is Featured' )
@@ -51,6 +96,9 @@ if(!class_exists('InvestOrDivest'))
             $this->register_reviews_meta_boxes();
             add_action( 'admin_enqueue_scripts', [&$this, 'enqueue_admin_styles'] );
             add_action( 'admin_enqueue_scripts', [&$this, 'enqueue_admin_scripts'] );
+            add_action('post_edit_form_tag', function(){
+                echo ' enctype="multipart/form-data"';
+            });
         }
         public function create_invest_or_divest_post_type(){
             register_taxonomy(
@@ -159,6 +207,9 @@ if(!class_exists('InvestOrDivest'))
                             $iod_video = json_decode(stripslashes_deep($_POST['_iod_video']))->embed->url;
                             $ytpattern = '/^.*(?:(?:youtu\.be\/|v\/|vi\/|u\/\w\/|embed\/)|(?:(?:watch)?\?v(?:i)?=|\&v(?:i)?=))([^#\&\?]*).*/';
                             $videoid = '';
+
+                            $title = $post->post_title;
+
                             if(preg_match($ytpattern,$iod_video,$vid_id)){
                                 $videoid = end($vid_id);
                                 $iod_video_thumbnail = 'http://img.youtube.com/vi/'.$videoid.'/mqdefault.jpg';
@@ -204,6 +255,8 @@ if(!class_exists('InvestOrDivest'))
                                 // Get Video Published Date
                                 $videoSnippet = $this->file_get_contents_curl("https://www.googleapis.com/youtube/v3/videos?part=snippet&id=$videoid&key=$apikey");
                                 $videoSnippet =json_decode($videoSnippet, true);
+
+
                                 if(is_array($videoSnippet)){
                                     update_post_meta($post->ID, 'video-snippet', json_encode($videoSnippet));
                                     $VidDate = date("Y-m-d H:i:s",strtotime($videoSnippet['items'][0]['snippet']['publishedAt']));
@@ -218,8 +271,46 @@ if(!class_exists('InvestOrDivest'))
                                         add_action( 'save_post_iod_video', [ &$this , 'save_iod_video_metabox' ] );
 
                                     }
+
+                                    $title = $videoSnippet['items'][0]['snippet']['localized']['title'];
                                 }
                             }
+
+                            if(empty($title)){
+                                $title = $iod_video;
+                            }
+
+
+                            if($iod_video){
+
+                                // Send Update to Slack
+                                // $this->slackbotsend('New Video Updated', [
+                                //     $title,
+                                //     "View on Youtube : " . $iod_video . " ",
+                                //     "New Video Uploaded on Market MasterClass.com - ".$iod_video." ",
+                                //     '#36a64f',
+                                //     'New Video Uploaded on Market MasterClass.com',
+                                //     null
+                                // ]);
+
+                                $category = 'Uncategorized';
+
+                                $cat = get_the_terms($post->ID,'iod_category');
+                                if(!empty($cat[0])){
+                                    $category  = $cat[0]->name;
+                                }
+
+                                $this->slackbotsend(implode("\n",[
+                                    "New Video Uploaded on ".get_bloginfo('name'),
+                                    "Category : " . $category,
+                                    "By: ". wp_get_current_user()->display_name,
+                                    "<" . site_url('videos') . "|Check on Website>",
+                                    "<" . $iod_video . "|Watch on Youtube>",
+                                    ]));
+
+                            }
+
+
                         }
 
                         $this->save_meta_value($post->ID,$field,$_POST[$field]);
