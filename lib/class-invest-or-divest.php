@@ -300,13 +300,26 @@ if(!class_exists('InvestOrDivest'))
                                     $category  = $cat[0]->name;
                                 }
 
+                                $updated = '';
+
+                                $termid = get_post_meta($post->ID, '_poststats', true);
+                                if (empty($termid)) {
+                                    // it's a new record
+                                    $updated = 'New Video Uploaded';
+                                    $this->save_meta_value($post->ID,'_poststats','Updated');
+                                } else {
+                                    // it's an existing record
+                                    $updated = 'A Video has been updated';
+                                }
+
                                 $this->slackbotsend(implode("\n",[
-                                    "New Video Uploaded on ".get_bloginfo('name'),
+                                    $updated." on ".get_bloginfo('name'),
                                     "Category : " . $category,
                                     "By: ". wp_get_current_user()->display_name,
                                     "<" . site_url('videos') . "|Check on Website>",
                                     "<" . $iod_video . "|Watch on Youtube>",
-                                    ]));
+                                ]));
+
 
                             }
 
