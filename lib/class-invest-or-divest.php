@@ -126,6 +126,7 @@ if(!class_exists('InvestOrDivest'))
                     'query_var' => true,
                     'show_ui'           => true,
                     'show_admin_column' => true,
+                    'show_in_rest' => true,
                     'capabilities' => [
                         'manage_terms',
                         'edit_terms',
@@ -158,6 +159,7 @@ if(!class_exists('InvestOrDivest'))
                         'rewrite' => [
                             'slug' => 'videos',
                         ],
+                        'show_in_rest' => true,
                         'supports' => [
                             'title',
                             'editor',
