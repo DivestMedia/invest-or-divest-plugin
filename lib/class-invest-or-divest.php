@@ -15,6 +15,52 @@ if(!class_exists('InvestOrDivest'))
             add_filter( 'manage_edit-iod_video_columns', [&$this,'custom_iod_video_columns'] ) ;
             add_action( 'manage_posts_custom_column' , [&$this,'iod_video_columns_data'], 10, 2 );
             add_action( 'admin_head' , [&$this,'iod_video_columns_css'] );
+
+            add_action('restrict_manage_posts',[&$this,'list_videocategories']);
+            add_action( 'request', [&$this,'filter_videobycategory'] );
+
+            add_filter( 'posts_where' , [&$this,'posts_where'] );
+        }
+
+         public function posts_where( $where ) {
+            if( is_admin() ) {
+                global $wpdb;       
+                if ( isset( $_GET['dd_is_featured'] ) ) {
+                    $is_featured = intval( $_GET['dd_is_featured'] );
+                    if($is_featured == 1)
+                        $where .= " AND ID IN (SELECT post_id FROM " . $wpdb->postmeta ." WHERE meta_key='_is_featured' AND meta_value=$is_featured  )";
+                    elseif($is_featured == 0)
+                        $where .= " AND ID IN (SELECT pm.post_id FROM " . $wpdb->postmeta ." AS pm WHERE (pm.meta_key='_is_featured' AND pm.meta_value=0) OR (SELECT COUNT(1) FROM " . $wpdb->postmeta ." AS pmc WHERE pmc.meta_id = pm.meta_id AND pmc.meta_key='_is_featured')  ) = 0 ";
+                }
+            }   
+            return $where;
+        }
+
+        public function list_videocategories($request) {
+            global $typenow;
+            if ($typenow=='iod_video'){
+                $args = array(
+                    'show_option_all' => "Show All Categories",
+                    'taxonomy'        => 'iod_category',
+                    'name'            => 'Video Category',
+                    'selected'        => !empty($_GET['iod_category'])?$_GET['iod_category']:(!empty($_GET['Video_Category'])?$_GET['Video_Category']:'')
+                );
+                wp_dropdown_categories($args);
+                $_selected = -1;
+                if(isset($_GET['dd_is_featured']))
+                    $_selected = $_GET['dd_is_featured'];
+                print_r('<select name="dd_is_featured"><option value="-1" '.($_selected==-1?'selected':'').'>-- Is Featured --</option><option value="1" '.($_selected==1?'selected':'').'>Featured</option><option value="0" '.($_selected==0?'selected':'').'>Not Featured</option></select>');
+            }
+        }
+        public function filter_videobycategory($request) {
+            if (is_admin() && $GLOBALS['PHP_SELF'] == '/wp-admin/edit.php' && isset($request['post_type']) && $request['post_type']=='iod_video') {
+               if(empty($request['iod_category'])&&!empty($_GET['Video_Category'])){
+                    $term = get_term($_GET['Video_Category']);
+                    if(empty($term->errors))
+                        $request['iod_category'] = $term->slug;
+               }
+            }
+            return $request;
         }
 
         public function iod_video_columns_css(){

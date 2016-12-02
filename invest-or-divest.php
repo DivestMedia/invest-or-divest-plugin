@@ -13,7 +13,7 @@ define( 'INVEST_DIVEST_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'INVEST_DIVEST_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'INVEST_DIVEST_DEBUG' , true );
 
-require_once(INVEST_DIVEST_PLUGIN_DIR . 'vendor/autoload.php');
+// require_once(INVEST_DIVEST_PLUGIN_DIR . 'vendor/autoload.php');
 require_once(INVEST_DIVEST_PLUGIN_DIR . 'lib/class-invest-or-divest.php');
 require_once(INVEST_DIVEST_PLUGIN_DIR . 'lib/iod-custom-template.php');
 require_once(INVEST_DIVEST_PLUGIN_DIR . 'lib/iod-generate-widget.php');
