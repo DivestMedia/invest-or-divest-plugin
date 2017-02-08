@@ -83,7 +83,7 @@ if(!class_exists('InvestOrDivest'))
         public function slackbotsend($msg = '',$attachment = []){
             $loop = \React\EventLoop\Factory::create();
             $client = new \Slack\ApiClient($loop);
-            $client->setToken('xoxb-96296393831-vDBfYkWD0jBNn2jqNv9TJyge');
+            $client->setToken('xoxb-96296393831-KMhhzQIaduGjiCRGivFidaiK');
 
             if(!empty($attachment)){
                 $attachment = new \Slack\Message\Attachment($attachment);
